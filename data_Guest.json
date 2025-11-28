@@ -1,0 +1,26 @@
+{
+  "tasks": [
+    {
+      "type": "Assignment",
+      "subject": "MAT 152",
+      "title": "asdf",
+      "datetime": "2025-11-28T09:00:00",
+      "priority": "Medium"
+    }
+  ],
+  "subjects": [
+    "GEN 001",
+    "GEN 002",
+    "MAT 152",
+    "ITE 260",
+    "ITE 366"
+  ],
+  "sticky_notes": [
+    {
+      "text": "Today while the sun shines",
+      "time": "2025-11-29 12:31 AM"
+    }
+  ],
+  "theme": "Purple",
+  "left_view": "tasks"
+}
