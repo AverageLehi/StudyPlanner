@@ -2,10 +2,107 @@
   "tasks": [
     {
       "type": "Assignment",
+      "subject": "GEN 001",
+      "title": "Essay on Philippine History",
+      "datetime": "2025-12-05T14:00:00",
+      "priority": "High",
+      "done": false
+    },
+    {
+      "type": "Exam",
       "subject": "MAT 152",
-      "title": "asdf",
+      "title": "Midterm Exam - Calculus",
+      "datetime": "2025-12-08T10:00:00",
+      "priority": "High",
+      "done": false
+    },
+    {
+      "type": "Assignment",
+      "subject": "ITE 260",
+      "title": "Database Design Project",
+      "datetime": "2025-12-10T16:00:00",
+      "priority": "High",
+      "done": false
+    },
+    {
+      "type": "Study Session",
+      "subject": "MAT 152",
+      "title": "Review Integration Techniques",
+      "datetime": "2025-12-02T15:00:00",
+      "priority": "Medium",
+      "done": false
+    },
+    {
+      "type": "Class",
+      "subject": "ITE 366",
+      "title": "Software Engineering Lecture",
+      "datetime": "2025-12-03T09:00:00",
+      "priority": "Medium",
+      "done": false
+    },
+    {
+      "type": "Assignment",
+      "subject": "GEN 002",
+      "title": "Research Paper on Climate Change",
+      "datetime": "2025-12-12T23:59:00",
+      "priority": "Medium",
+      "done": false
+    },
+    {
+      "type": "Study Session",
+      "subject": "ITE 366",
+      "title": "Practice UML Diagrams",
+      "datetime": "2025-12-04T18:00:00",
+      "priority": "Medium",
+      "done": false
+    },
+    {
+      "type": "Exam",
+      "subject": "ITE 260",
+      "title": "SQL Query Quiz",
+      "datetime": "2025-12-06T13:00:00",
+      "priority": "High",
+      "done": false
+    },
+    {
+      "type": "Assignment",
+      "subject": "ITE 366",
+      "title": "Agile Methodology Report",
+      "datetime": "2025-12-15T17:00:00",
+      "priority": "Low",
+      "done": false
+    },
+    {
+      "type": "Class",
+      "subject": "GEN 001",
+      "title": "Group Discussion - WWII",
+      "datetime": "2025-12-09T11:00:00",
+      "priority": "Low",
+      "done": false
+    },
+    {
+      "type": "Study Session",
+      "subject": "GEN 002",
+      "title": "Environmental Science Review",
+      "datetime": "2025-12-07T14:00:00",
+      "priority": "Low",
+      "done": false
+    },
+    {
+      "type": "Assignment",
+      "subject": "MAT 152",
+      "title": "Problem Set 7 - Derivatives",
       "datetime": "2025-11-28T09:00:00",
-      "priority": "Medium"
+      "priority": "High",
+      "done": true
+    },
+    {
+      "type": "Exam",
+      "subject": "GEN 002",
+      "title": "Quiz on Ecosystems",
+      "datetime": "2025-11-27T08:00:00",
+      "priority": "Medium",
+      "done": true
     }
   ],
   "subjects": [
@@ -13,14 +110,36 @@
     "GEN 002",
     "MAT 152",
     "ITE 260",
-    "ITE 366"
+    "ITE 366",
+    "PE 101",
+    "ENG 103"
   ],
   "sticky_notes": [
     {
-      "text": "Today while the sun shines",
-      "time": "2025-11-29 12:31 AM"
+      "text": "Don't forget to submit the group project proposal by Wednesday!",
+      "time": "2025-11-28 09:15 AM"
+    },
+    {
+      "text": "Study group meeting at library - 3 PM tomorrow",
+      "time": "2025-11-28 10:30 AM"
+    },
+    {
+      "text": "Ask professor about the extra credit assignment",
+      "time": "2025-11-27 02:45 PM"
+    },
+    {
+      "text": "Download textbook chapters 5-7 for next week",
+      "time": "2025-11-26 04:20 PM"
+    },
+    {
+      "text": "Practice coding problems for the upcoming exam",
+      "time": "2025-11-25 11:00 AM"
+    },
+    {
+      "text": "Review lecture notes before the weekend",
+      "time": "2025-11-24 08:30 AM"
     }
   ],
-  "theme": "Purple",
+  "theme": "Blue",
   "left_view": "tasks"
 }
