@@ -920,7 +920,7 @@ class StudyPlanner:
 
         # Quote text display
         self.quote_text_label = ctk.CTkLabel(self.quote_card, textvariable=self.quote_text_var,
-                                             font=("Arial", 11, "italic"), wraplength=240, 
+                                             font=("Arial", 13, "italic"), wraplength=240, 
                                              justify="center")
         self.quote_text_label.pack(pady=(10, 5), padx=10, fill=ctk.X, expand=True)
         self.themed_widgets.append(self.quote_text_label)
