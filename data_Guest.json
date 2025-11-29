@@ -1,14 +1,6 @@
 {
   "tasks": [
     {
-      "type": "Assignment",
-      "subject": "GEN 001",
-      "title": "Essay on Philippine History",
-      "datetime": "2025-12-05T14:00:00",
-      "priority": "High",
-      "done": false
-    },
-    {
       "type": "Exam",
       "subject": "MAT 152",
       "title": "Midterm Exam - Calculus",
@@ -30,7 +22,7 @@
       "title": "Review Integration Techniques",
       "datetime": "2025-12-02T15:00:00",
       "priority": "Medium",
-      "done": false
+      "done": true
     },
     {
       "type": "Class",
@@ -87,14 +79,6 @@
       "datetime": "2025-12-07T14:00:00",
       "priority": "Low",
       "done": false
-    },
-    {
-      "type": "Assignment",
-      "subject": "MAT 152",
-      "title": "Problem Set 7 - Derivatives",
-      "datetime": "2025-11-28T09:00:00",
-      "priority": "High",
-      "done": true
     },
     {
       "type": "Exam",

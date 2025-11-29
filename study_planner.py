@@ -15,13 +15,16 @@ class LoginWindow:
     def __init__(self):
         self.root = ctk.CTk()
         self.root.title("Study Planner Login")
-        self.root.geometry("450x280")
+        self.root.geometry("500x280")
         ctk.set_appearance_mode("system")
         ctk.set_default_color_theme("blue")
         self.users_file = "users.json"
 
         self.users = self.load_users()
         self.create_login_widgets()
+        
+        # Set focus after all widgets are created and window is ready
+        self.root.after(100, lambda: self.username.focus_force())
 
     def create_login_widgets(self):
         # Outer card/container for a professional look
@@ -40,14 +43,14 @@ class LoginWindow:
         user_row = ctk.CTkFrame(form, fg_color="transparent")
         user_row.pack(fill=ctk.X, pady=(4, 6))
         ctk.CTkLabel(user_row, text="Username", width=120).pack(side=ctk.LEFT)
-        self.username = ctk.CTkEntry(user_row, width=220)
+        self.username = ctk.CTkEntry(user_row, width=220, border_color="#4a90e2")
         self.username.pack(side=ctk.LEFT, fill=ctk.X, expand=True)
 
         # Password with show/hide toggle
         pass_row = ctk.CTkFrame(form, fg_color="transparent")
         pass_row.pack(fill=ctk.X, pady=(4, 6))
         ctk.CTkLabel(pass_row, text="Password", width=120).pack(side=ctk.LEFT)
-        self.password = ctk.CTkEntry(pass_row, show="*", width=220)
+        self.password = ctk.CTkEntry(pass_row, show="*", width=220, border_color="#4a90e2")
         self.password.pack(side=ctk.LEFT, fill=ctk.X, expand=True)
         show_var = tk.BooleanVar(value=False)
         def _toggle_login_password():
@@ -55,7 +58,8 @@ class LoginWindow:
                 self.password.configure(show="" if show_var.get() else "*")
             except Exception:
                 pass
-        show_btn = ctk.CTkCheckBox(pass_row, text="Show", variable=show_var, command=_toggle_login_password)
+        show_btn = ctk.CTkCheckBox(pass_row, text="Show", variable=show_var, command=_toggle_login_password,
+                                  border_width=1, corner_radius=4, checkbox_height=18)
         show_btn.pack(side=ctk.LEFT, padx=8)
 
         # Action buttons
@@ -150,9 +154,14 @@ class LoginWindow:
         admin_pw_var = tk.StringVar()
         pw_entry = ctk.CTkEntry(pass_frame, textvariable=admin_pw_var, 
                                 show="*", width=220, height=35,
-                                placeholder_text="Admin password")
+                                placeholder_text="Admin password", border_color="#9c27b0")
         pw_entry.pack(side=ctk.LEFT, fill=ctk.X, expand=True)
         pw_entry.focus_set()
+        # Reassert focus shortly after to handle OS focus quirks
+        try:
+            admin_window.after(120, lambda: pw_entry.focus_force())
+        except Exception:
+            pass
         
         # Show password toggle
         show_var = tk.BooleanVar(value=False)
@@ -160,7 +169,8 @@ class LoginWindow:
             pw_entry.configure(show="" if show_var.get() else "*")
         
         show_check = ctk.CTkCheckBox(pass_frame, text="Show", variable=show_var, 
-                                     command=toggle_show, width=60)
+                                     command=toggle_show, width=60,
+                                     border_width=1, corner_radius=4, checkbox_height=18)
         show_check.pack(side=ctk.LEFT, padx=(8, 0))
         
         # Login function
@@ -237,14 +247,20 @@ class LoginWindow:
         urow = ctk.CTkFrame(form, fg_color="transparent")
         urow.pack(fill=ctk.X, pady=(4,6))
         ctk.CTkLabel(urow, text="Username", width=120).pack(side=ctk.LEFT)
-        new_username = ctk.CTkEntry(urow, width=220)
+        new_username = ctk.CTkEntry(urow, width=220, border_color="#4a90e2")
         new_username.pack(side=ctk.LEFT, fill=ctk.X, expand=True)
+        new_username.focus_set()
+        # Reassert focus shortly after to handle OS focus quirks
+        try:
+            register_window.after(120, lambda: new_username.focus_force())
+        except Exception:
+            pass
 
         # Password with show toggle
         prow = ctk.CTkFrame(form, fg_color="transparent")
         prow.pack(fill=ctk.X, pady=(4,6))
         ctk.CTkLabel(prow, text="Password", width=120).pack(side=ctk.LEFT)
-        new_password = ctk.CTkEntry(prow, show="*", width=220)
+        new_password = ctk.CTkEntry(prow, show="*", width=220, border_color="#4a90e2")
         new_password.pack(side=ctk.LEFT, fill=ctk.X, expand=True)
         reg_show_var = tk.BooleanVar(value=False)
         def _toggle_reg_password():
@@ -252,7 +268,8 @@ class LoginWindow:
                 new_password.configure(show="" if reg_show_var.get() else "*")
             except Exception:
                 pass
-        ctk.CTkCheckBox(prow, text="Show", variable=reg_show_var, command=_toggle_reg_password).pack(side=ctk.LEFT, padx=8)
+        ctk.CTkCheckBox(prow, text="Show", variable=reg_show_var, command=_toggle_reg_password,
+                       border_width=1, corner_radius=4, checkbox_height=18).pack(side=ctk.LEFT, padx=8)
 
         def register():
             u = new_username.get().strip()
@@ -433,7 +450,7 @@ class StudyPlanner:
 
 
         # Header title
-        self.title_label = ctk.CTkLabel(self.main_frame, text="Study Planner", font=("Arial", 22, "bold"))
+        self.title_label = ctk.CTkLabel(self.main_frame, text="Study Planner", font=("Arial", 16, "bold"))
         self.title_label.pack(pady=(0, 2))
         self.themed_widgets.append(self.title_label)
 
@@ -542,109 +559,96 @@ class StudyPlanner:
         task_title.pack(pady=(12, 8))
         self.themed_widgets.append(task_title)
 
-        form_frame = ctk.CTkFrame(self.task_frame, fg_color="transparent")
+        # Bordered container for inputs and Add button
+        input_container = ctk.CTkFrame(self.task_frame, corner_radius=8, border_width=2)
+        input_container.pack(fill=ctk.X, padx=10, pady=(0, 10))
+        self.themed_widgets.append(input_container)
+
+        form_frame = ctk.CTkFrame(input_container, fg_color="transparent")
         form_frame.pack(fill=ctk.X, padx=10, pady=10)
         self.themed_widgets.append(form_frame)
 
-        # Configure grid layout: 2 columns for professional compact design
-        # Row 0: Title (spans both columns)
-        # Row 1: Type | Subject
-        # Row 2: Date | Time
-        # Row 3: Priority
+        # Configure grid layout: compact design
+        # Row 0: Title (full width)
+        # Row 1: Type | Subject | Priority | Date | Time
         
         self.form_labels = []
         
-        # Title - full width across both columns
-        title_label = ctk.CTkLabel(form_frame, text="Title:")
-        title_label.grid(row=0, column=0, sticky="w", pady=4, padx=(0, 8))
-        self.form_labels.append(title_label)
-        self.themed_widgets.append(title_label)
-        
+        # Title - full width
         self.title_entry = ctk.CTkEntry(form_frame, width=400, placeholder_text="Enter task title")
-        self.title_entry.grid(row=0, column=1, columnspan=3, pady=4, sticky="ew")
+        self.title_entry.grid(row=0, column=0, columnspan=5, pady=4, sticky="ew")
         self.themed_widgets.append(self.title_entry)
         
-        # Type | Subject row
-        type_label = ctk.CTkLabel(form_frame, text="Type:")
-        type_label.grid(row=1, column=0, sticky="w", pady=4, padx=(0, 8))
-        self.form_labels.append(type_label)
-        self.themed_widgets.append(type_label)
-        
-        self.task_type_var = tk.StringVar(value="Assignment")
+        # Row 1: All fields on same row
+        # Type
+        self.task_type_var = tk.StringVar(value="Type:")
         task_type_combo = ctk.CTkComboBox(form_frame, values=["Assignment", "Exam", "Class", "Study Session"], 
-                                          variable=self.task_type_var, width=180, state="readonly")
-        task_type_combo.grid(row=1, column=1, pady=4, padx=(0, 10), sticky="ew")
-        task_type_combo.set("Assignment")
+                          variable=self.task_type_var, width=140, state="readonly")
+        task_type_combo.grid(row=1, column=0, pady=4, padx=(0, 6), sticky="ew")
+        task_type_combo.set("Type:")
         self.themed_widgets.append(task_type_combo)
         
-        subject_label = ctk.CTkLabel(form_frame, text="Subject:")
-        subject_label.grid(row=1, column=2, sticky="w", pady=4, padx=(10, 8))
-        self.form_labels.append(subject_label)
-        self.themed_widgets.append(subject_label)
-        
-        self.subject_var = tk.StringVar()
+        # Subject
+        self.subject_var = tk.StringVar(value="Subject:")
         self.subject_combo = ctk.CTkComboBox(form_frame, values=self.subjects, variable=self.subject_var, 
-                                             width=180, state="readonly")
-        self.subject_combo.grid(row=1, column=3, pady=4, sticky="ew")
+                             width=140, state="readonly")
+        self.subject_combo.grid(row=1, column=1, pady=4, padx=(0, 6), sticky="ew")
+        self.subject_combo.set("Subject:")
         self.themed_widgets.append(self.subject_combo)
         
-        # Date | Time row
-        date_label = ctk.CTkLabel(form_frame, text="Date:")
-        date_label.grid(row=2, column=0, sticky="w", pady=4, padx=(0, 8))
-        self.form_labels.append(date_label)
-        self.themed_widgets.append(date_label)
+        # Priority
+        self.priority_var = tk.StringVar(value="Priority:")
+        priority_combo = ctk.CTkComboBox(form_frame, values=["Low", "Medium", "High"], 
+                         variable=self.priority_var, width=120, state="readonly")
+        priority_combo.grid(row=1, column=2, pady=4, padx=(0, 6), sticky="ew")
+        priority_combo.set("Priority:")
+        self.themed_widgets.append(priority_combo)
         
+        # Date
         self.selected_date = datetime.now()
-        self.date_btn = ctk.CTkButton(form_frame, text=self.selected_date.strftime("%B %d, %Y"), 
-                                       command=self.open_date_picker, width=180, anchor="w")
-        self.date_btn.grid(row=2, column=1, pady=4, padx=(0, 10), sticky="ew")
+        self.date_btn = ctk.CTkButton(form_frame, text="Date: " + self.selected_date.strftime("%b %d, %Y"), 
+                                       command=self.open_date_picker, width=140, anchor="w")
+        self.date_btn.grid(row=1, column=3, pady=4, padx=(0, 6), sticky="ew")
         self.themed_widgets.append(self.date_btn)
-        
-        time_label = ctk.CTkLabel(form_frame, text="Time:")
-        time_label.grid(row=2, column=2, sticky="w", pady=4, padx=(10, 8))
-        self.form_labels.append(time_label)
-        self.themed_widgets.append(time_label)
         
         # Time container with entry and AM/PM buttons
         time_container = ctk.CTkFrame(form_frame, fg_color="transparent")
-        time_container.grid(row=2, column=3, pady=4, sticky="ew")
+        time_container.grid(row=1, column=4, pady=4, sticky="ew")
         
-        self.time_entry = ctk.CTkEntry(time_container, width=80, placeholder_text="HH:MM")
-        self.time_entry.insert(0, "09:00")
-        self.time_entry.pack(side=ctk.LEFT, padx=(0, 8))
+        self.time_entry = ctk.CTkEntry(time_container, width=60, placeholder_text="Time:")
+        self.time_entry.pack(side=ctk.LEFT, padx=(0, 4))
         self.themed_widgets.append(self.time_entry)
         
         # AM/PM toggle buttons with white text
         self.am_pm_var = tk.StringVar(value="AM")
-        self.am_btn = ctk.CTkButton(time_container, text="AM", width=45, height=28,
+        self.am_btn = ctk.CTkButton(time_container, text="AM", width=35, height=28,
                                     command=lambda: self.toggle_am_pm("AM"), text_color="white")
-        self.am_btn.pack(side=ctk.LEFT, padx=2)
+        self.am_btn.pack(side=ctk.LEFT, padx=1)
         self.themed_widgets.append(self.am_btn)
         
-        self.pm_btn = ctk.CTkButton(time_container, text="PM", width=45, height=28,
+        self.pm_btn = ctk.CTkButton(time_container, text="PM", width=35, height=28,
                                     command=lambda: self.toggle_am_pm("PM"), text_color="white")
-        self.pm_btn.pack(side=ctk.LEFT, padx=2)
+        self.pm_btn.pack(side=ctk.LEFT, padx=1)
         self.themed_widgets.append(self.pm_btn)
-        
-        # Priority - full width
-        priority_label = ctk.CTkLabel(form_frame, text="Priority:")
-        priority_label.grid(row=3, column=0, sticky="w", pady=4, padx=(0, 8))
-        self.form_labels.append(priority_label)
-        self.themed_widgets.append(priority_label)
-        
-        self.priority_var = tk.StringVar(value="Medium")
-        priority_combo = ctk.CTkComboBox(form_frame, values=["Low", "Medium", "High"], 
-                                         variable=self.priority_var, width=180, state="readonly")
-        priority_combo.grid(row=3, column=1, pady=4, sticky="ew")
-        priority_combo.set("Medium")
-        self.themed_widgets.append(priority_combo)
         
         # Set initial button states
         self.update_am_pm_buttons()
         
         # Configure column weights for responsive layout
+        form_frame.columnconfigure(0, weight=1)
         form_frame.columnconfigure(1, weight=1)
+        form_frame.columnconfigure(2, weight=1)
         form_frame.columnconfigure(3, weight=1)
+        form_frame.columnconfigure(4, weight=1)
+
+        # Add Task button inside the bordered input container
+        add_btn_frame = ctk.CTkFrame(input_container, fg_color="transparent")
+        add_btn_frame.pack(fill=ctk.X, padx=10, pady=(0, 10))
+        self.themed_widgets.append(add_btn_frame)
+
+        self.add_btn = ctk.CTkButton(add_btn_frame, text="Add Task", command=self.add_task, width=120)
+        self.add_btn.pack(side=ctk.LEFT, padx=6, pady=4)
+        self.themed_widgets.append(self.add_btn)
 
 
 
@@ -656,22 +660,18 @@ class StudyPlanner:
 
 
 
-        self.add_btn = ctk.CTkButton(btn_frame, text="Add Task", command=self.add_task)
-        self.add_btn.pack(side=ctk.LEFT, padx=6, pady=4)
-        self.themed_widgets.append(self.add_btn)
-        self.edit_btn = ctk.CTkButton(btn_frame, text="Edit Selected", command=self.edit_task)
+        self.edit_btn = ctk.CTkButton(btn_frame, text="Edit Selected", command=self.edit_task, width=90)
         self.edit_btn.pack(side=ctk.LEFT, padx=6, pady=4)
-        # include edit button in themed widgets
         self.themed_widgets.append(self.edit_btn)
 
 
 
 
-        self.delete_btn = ctk.CTkButton(btn_frame, text="Delete Selected", command=self.delete_task)
+        self.delete_btn = ctk.CTkButton(btn_frame, text="Delete Selected", command=self.delete_task, width=90)
         self.delete_btn.pack(side=ctk.LEFT, padx=6, pady=4)
         self.themed_widgets.append(self.delete_btn)
 
-        self.mark_done_btn = ctk.CTkButton(btn_frame, text="Mark Done", command=self.mark_task_done)
+        self.mark_done_btn = ctk.CTkButton(btn_frame, text="Mark Done", command=self.mark_task_done, width=90)
         self.mark_done_btn.pack(side=ctk.LEFT, padx=6, pady=4)
         self.themed_widgets.append(self.mark_done_btn)
 
@@ -683,7 +683,6 @@ class StudyPlanner:
         self.export_tasks_txt_btn.pack(side=ctk.LEFT, padx=6, pady=4)
         self.themed_widgets.append(self.export_tasks_txt_btn)
 
-#search bar
         # Add a priority-toggle button and search entry side-by-side on the right
         # Priority button cycles through: All, High, Medium, Low (default: Medium)
         self.priority_levels = ["All", "High", "Medium", "Low"]
@@ -704,14 +703,20 @@ class StudyPlanner:
 
 
         self.priority_btn = ctk.CTkButton(btn_frame, text=f"Priority: {self.priority_levels[self.priority_index]}",
-            command=_toggle_priority_sort, width=140)
+            command=_toggle_priority_sort, width=110)
         # make sure priority button is styled by apply_theme
         self.themed_widgets.append(self.priority_btn)
         # pack the priority button so it's visible in the controls row
         try:
-            self.priority_btn.pack(side=ctk.LEFT, padx=6, pady=4)
+            self.priority_btn.pack(side=ctk.RIGHT, padx=6, pady=4)
         except Exception:
             pass
+        
+        # Live filter entry for tasks
+        self.search_entry = ctk.CTkEntry(btn_frame, placeholder_text="🔍 Filter tasks", width=160)
+        self.search_entry.pack(side=ctk.RIGHT, padx=6, pady=4)
+        self.search_entry.bind('<KeyRelease>', lambda e: self.update_task_list())
+        self.themed_widgets.append(self.search_entry)
         # keep a helper to update the label when toggled
         def _update_priority_button_text():
             cur = self.priority_levels[self.priority_index]
@@ -778,7 +783,7 @@ class StudyPlanner:
 
         # Title for notes section
         notes_title = ctk.CTkLabel(self.notes_frame, text="Quick Notes", 
-                                    font=("Arial", 14, "bold"))
+                                    font=("Arial", 16, "bold"))
         notes_title.pack(pady=(10, 5), padx=10)
         self.themed_widgets.append(notes_title)
 
@@ -787,7 +792,7 @@ class StudyPlanner:
         self.note_input_frame.pack(fill=ctk.X, padx=10, pady=(8, 6))
         self.themed_widgets.append(self.note_input_frame)
 
-        self.note_entry = ctk.CTkEntry(self.note_input_frame)
+        self.note_entry = ctk.CTkEntry(self.note_input_frame, placeholder_text="Enter note description")
         self.note_entry.pack(side=ctk.LEFT, fill=ctk.X, expand=True)
         self.note_entry.bind('<Return>', lambda e: self.add_note())
         self.themed_widgets.append(self.note_entry)
@@ -866,8 +871,15 @@ class StudyPlanner:
         
         # Calendar View title
         cal_title = ctk.CTkLabel(self.cal_frame, text="Calendar View", font=("Arial", 16, "bold"))
-        cal_title.pack(pady=(12, 4))
+        cal_title.pack(pady=(12, 2))
         self.themed_widgets.append(cal_title)
+        
+        # Calendar subtitle
+        cal_subtitle = ctk.CTkLabel(self.cal_frame, text="Click highlighted ." \
+        "dates to view scheduled tasks", 
+                                     font=("Arial", 10, "italic"))
+        cal_subtitle.pack(pady=(0, 8))
+        self.themed_widgets.append(cal_subtitle)
         
         nav_frame = ctk.CTkFrame(self.cal_frame, fg_color="transparent")
         nav_frame.pack(fill=ctk.X, padx=10, pady=5)
@@ -902,7 +914,7 @@ class StudyPlanner:
 
         # Quote title
         quote_title = ctk.CTkLabel(self.quote_card, text="Daily Inspiration", 
-                                    font=("Arial", 14, "bold"))
+                                    font=("Arial", 16, "bold"))
         quote_title.pack(pady=(10, 5), padx=10)
         self.themed_widgets.append(quote_title)
 
@@ -1864,7 +1876,7 @@ class StudyPlanner:
             list_frame.pack(fill=ctk.BOTH, expand=True, padx=10, pady=10)
             
             task_tree = ttk.Treeview(list_frame, columns=("Time", "Title", "Type", "Subject", "Priority"),
-                                     show="headings", height=12)
+                                     show="headings", height=12, style="Custom.Treeview")
             for col, w in [("Time", 100), ("Title", 320), ("Type", 120), ("Subject", 140), ("Priority", 90)]:
                 task_tree.heading(col, text=col)
                 task_tree.column(col, width=w, anchor="center" if col in ("Time", "Priority") else "w")
@@ -1972,6 +1984,12 @@ class StudyPlanner:
         new_name_var = tk.StringVar(value=self.username)
         new_name_entry = ctk.CTkEntry(name_section, textvariable=new_name_var, width=400)
         new_name_entry.pack(fill=ctk.X, pady=(2, 8))
+        # Ensure the name field is ready to type on open
+        try:
+            new_name_entry.focus_set()
+            win.after(120, lambda: new_name_entry.focus_force())
+        except Exception:
+            pass
 
         def _apply_name_change():
             users = _load_users()
@@ -2015,7 +2033,13 @@ class StudyPlanner:
                 pass
             messagebox.showinfo("Success", "Display name updated.")
 
-        ctk.CTkButton(name_section, text="Save Name", command=_apply_name_change, width=140).pack(anchor="w", pady=(0,4))
+        save_name_btn = ctk.CTkButton(name_section, text="Save Name", command=_apply_name_change, width=140)
+        save_name_btn.pack(anchor="w", pady=(0,4))
+        # Bind Enter to save name while Account Settings is active
+        try:
+            win.bind('<Return>', lambda e: _apply_name_change())
+        except Exception:
+            pass
 
         # Divider
         ctk.CTkLabel(container, text="").pack(pady=6)
@@ -2095,6 +2119,10 @@ class StudyPlanner:
                                            placeholder_text="Current password")
                 verify_entry.pack(pady=(0, 15))
                 verify_entry.focus_set()
+                try:
+                    verify_dialog.after(120, lambda: verify_entry.focus_force())
+                except Exception:
+                    pass
                 
                 # Result storage
                 result = {"password": None, "confirmed": False}
@@ -2111,6 +2139,10 @@ class StudyPlanner:
                             messagebox.showerror("Error", "Incorrect password.", parent=verify_dialog)
                             verify_entry.delete(0, tk.END)
                             verify_entry.focus_set()
+                            try:
+                                verify_dialog.after(120, lambda: verify_entry.focus_force())
+                            except Exception:
+                                pass
                     else:
                         messagebox.showwarning("Error", "Please enter a password.", parent=verify_dialog)
                 
@@ -2150,7 +2182,8 @@ class StudyPlanner:
                 else:
                     current_pw_label.configure(text="••••••••")
                     
-        show_toggle = ctk.CTkCheckBox(pwd_section, text="Show Passwords", variable=show_var, command=_toggle_visibility)
+        show_toggle = ctk.CTkCheckBox(pwd_section, text="Show Passwords", variable=show_var, command=_toggle_visibility,
+                                     border_width=1, corner_radius=4, checkbox_height=18)
         show_toggle.pack(anchor="w", pady=(6,2))
 
         def _apply_password_change():
@@ -2196,7 +2229,13 @@ class StudyPlanner:
             except Exception:
                 pass
 
-        ctk.CTkButton(pwd_section, text="Save Password", command=_apply_password_change, width=160).pack(anchor="w", pady=(8,0))
+        save_pwd_btn = ctk.CTkButton(pwd_section, text="Save Password", command=_apply_password_change, width=160)
+        save_pwd_btn.pack(anchor="w", pady=(8,0))
+        # Bind Enter to save password in this dialog
+        try:
+            win.bind('<Return>', lambda e: _apply_password_change())
+        except Exception:
+            pass
 
         # Footer
         footer = ctk.CTkFrame(container, fg_color="transparent")
@@ -2652,27 +2691,23 @@ class StudyPlanner:
         timeframe_var = tk.StringVar(value="7 days")
         ctk.CTkLabel(header, text="Timeframe:").pack(side=ctk.LEFT)
         timeframe_menu = ctk.CTkOptionMenu(header, values=["Today", "3 days", "7 days", "30 days", "All"],
-                                           variable=timeframe_var, fg_color=accent, button_color=accent,
-                                           button_hover_color=accent)
+                           variable=timeframe_var)
         timeframe_menu.pack(side=ctk.LEFT, padx=(6,12))
 
         subject_var = tk.StringVar(value="All")
         ctk.CTkLabel(header, text="Subject:").pack(side=ctk.LEFT)
-        subject_menu = ctk.CTkOptionMenu(header, values=["All"] + sorted(self.subjects), variable=subject_var,
-                                         fg_color=accent, button_color=accent, button_hover_color=accent)
+        subject_menu = ctk.CTkOptionMenu(header, values=["All"] + sorted(self.subjects), variable=subject_var)
         subject_menu.pack(side=ctk.LEFT, padx=(6,12))
 
         type_var = tk.StringVar(value="All")
         ctk.CTkLabel(header, text="Type:").pack(side=ctk.LEFT)
         type_menu = ctk.CTkOptionMenu(header, values=["All", "Assignment", "Exam", "Class", "Study Session"],
-                                       variable=type_var, fg_color=accent, button_color=accent,
-                                       button_hover_color=accent)
+                           variable=type_var)
         type_menu.pack(side=ctk.LEFT, padx=(6,12))
 
         sort_var = tk.StringVar(value="Date")
         ctk.CTkLabel(header, text="Sort:").pack(side=ctk.LEFT)
-        sort_menu = ctk.CTkOptionMenu(header, values=["Date", "Priority", "Subject"], variable=sort_var,
-                                      fg_color=accent, button_color=accent, button_hover_color=accent)
+        sort_menu = ctk.CTkOptionMenu(header, values=["Date", "Priority", "Subject"], variable=sort_var)
         sort_menu.pack(side=ctk.LEFT, padx=(6,0))
 
         # Body: Treeview
@@ -2925,19 +2960,36 @@ class StudyPlanner:
 
 
         # Update root and all themed widgets
+        # Use a neutral off-white background that blends with all themes
+        root_bg = "#f5f5f7"  # Soft off-white that works with all accents
         try:
-            self.root.configure(fg_color=bg)
+            self.root.configure(fg_color=root_bg)
         except:
-            self.root.configure(bg=bg)
+            self.root.configure(bg=root_bg)
 
 
 
 
         # Create or update a ttk style for treeviews so colors are applied there too.
+        # Calculate off-white tree background (slightly whiter than frame bg)
+        try:
+            r, g, b = hex_to_rgb(bg)
+            luminance_bg = (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255
+        except Exception:
+            luminance_bg = 0.6
+        
+        # For light themes, make tree slightly lighter; for dark themes, slightly lighter too
+        if luminance_bg > 0.6:
+            # Light theme: make tree whiter than frame
+            tree_bg = "#f9f9fc" if self.current_theme == "Default" else adjust_brightness(bg, 1.03)
+        else:
+            # Dark theme: make tree slightly lighter
+            tree_bg = adjust_brightness(bg, 1.08)
+        
         try:
             style = ttk.Style()
             # Use a custom style name to avoid interfering with global styles
-            style.configure("Custom.Treeview", background=bg, fieldbackground=bg, foreground=text)
+            style.configure("Custom.Treeview", background=tree_bg, fieldbackground=tree_bg, foreground=text)
             # Heading text color: always use theme text (dark) for readability across themes
             style.configure("Custom.Treeview.Heading", background=accent, foreground=text)
             style.map("Custom.Treeview", background=[('selected', accent)], foreground=[('selected', 'white')])
@@ -2948,14 +3000,14 @@ class StudyPlanner:
             try:
                 # Try CTk-specific configuration first
                 if isinstance(widget, ctk.CTkLabel):
-                    widget.configure(fg_color=bg)
+                    widget.configure(fg_color="transparent")
                     if widget == self.title_label or widget == self.month_label:
                         widget.configure(text_color=accent)
                     else:
                         widget.configure(text_color=text)
                 elif isinstance(widget, ctk.CTkButton):
                     # Give CTkButtons a visible background color (not identical to window bg)
-                    widget.configure(fg_color=button_bg, text_color=text)
+                    widget.configure(fg_color=button_bg, text_color=text, border_width=1, border_color=accent)
                     # Make important action buttons use the accent color so they're visible.
                     primaries = [getattr(self, "subjects_btn", None), getattr(self, "reminders_btn", None),
                                 getattr(self, "add_btn", None), getattr(self, "prev_btn", None),
@@ -2963,28 +3015,32 @@ class StudyPlanner:
                                 getattr(self, "edit_note_btn", None), getattr(self, "delete_note_btn", None), 
                                 getattr(self, "new_quote_btn", None), getattr(self, "export_btn", None)]
                     if widget in primaries:
-                        widget.configure(fg_color=accent, text_color="white")
+                        widget.configure(fg_color=accent, text_color="white", border_width=1, border_color=accent)
                     # Task-specific special buttons
                     if widget == getattr(self, 'delete_btn', None):
                         # task deletion is destructive -> red
-                        widget.configure(fg_color="#f44336", text_color="white")
+                        widget.configure(fg_color="#f44336", text_color="white", border_width=1, border_color=accent)
                     if widget == getattr(self, 'mark_done_btn', None):
                         # mark-as-done should look positive
-                        widget.configure(fg_color="#4caf50", text_color="white")
+                        widget.configure(fg_color="#4caf50", text_color="white", border_width=1, border_color=accent)
                 elif isinstance(widget, ctk.CTkFrame):
-                    # Always set border_color to accent for theme responsiveness
-                    try:
-                        widget.configure(fg_color=bg, border_color=accent)
-                    except Exception:
+                    # Main frame and transparent frames use neutral bg, card frames use themed bg
+                    if widget == self.main_frame:
+                        widget.configure(fg_color=root_bg, border_color=accent)
+                    else:
+                        # Always set border_color to accent for theme responsiveness
                         try:
-                            widget.configure(fg_color=bg)
+                            widget.configure(fg_color=bg, border_color=accent)
                         except Exception:
-                            pass
+                            try:
+                                widget.configure(fg_color=bg)
+                            except Exception:
+                                pass
                 elif isinstance(widget, (ctk.CTkComboBox, getattr(ctk, 'CTkOptionMenu', object))):
                     # combobox/option menus use different option names for colors
                     try:
                         # set a slightly contrasted background for dropdowns and keep text readable
-                        widget.configure(fg_color=combo_bg, text_color=text)
+                        widget.configure(fg_color=combo_bg, text_color=text, border_width=1, border_color=accent)
                         # some CTk implementations support button_color to style the glyph
                         try:
                             widget.configure(button_color=accent)
@@ -2996,8 +3052,8 @@ class StudyPlanner:
                         except Exception:
                             pass
                 elif isinstance(widget, ctk.CTkEntry):
-                    # CTkEntry uses fg_color for background and text_color for text
-                    widget.configure(fg_color=entry_bg, text_color=text)
+                    # CTkEntry uses fg_color for background, text_color for text, and border_color for borders
+                    widget.configure(fg_color=entry_bg, text_color=text, border_color=accent, border_width=1)
                 else:
                     # Handle plain tkinter / ttk widgets
                     if isinstance(widget, tk.Label):
@@ -3013,9 +3069,12 @@ class StudyPlanner:
                         try:
                             if style:
                                 widget.configure(style="Custom.Treeview")
-                            # Force update for tag-based colors
-                            widget.tag_configure('done', foreground='gray')
-                            widget.tag_configure('sep', foreground='gray35')
+                            # Completed tasks should use theme text color with dimmed effect
+                            # Instead of gray, use slightly dimmed theme text color
+                            r, g, b = hex_to_rgb(text)
+                            dimmed_text = rgb_to_hex((r * 0.6, g * 0.6, b * 0.6))
+                            widget.tag_configure('done', foreground=dimmed_text)
+                            widget.tag_configure('sep', foreground=accent)
                         except Exception:
                             pass
                     else:
